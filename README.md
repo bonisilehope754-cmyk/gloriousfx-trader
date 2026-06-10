@@ -1,0 +1,1 @@
+# gloriousfx-trader
