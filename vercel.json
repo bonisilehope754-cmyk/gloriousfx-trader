@@ -1,5 +1,5 @@
 {
-  "installCommand": "npm install -g pnpm && pnpm install",
-  "buildCommand": "pnpm --filter @workspace/apex-trader run build",
+  "installCommand": "npm install -g pnpm@9 && pnpm install --no-frozen-lockfile",
+  "buildCommand": "cd artifacts/apex-trader && pnpm run build",
   "outputDirectory": "artifacts/apex-trader/dist"
 }
