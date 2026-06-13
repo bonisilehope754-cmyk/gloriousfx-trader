@@ -1,5 +1,5 @@
 {
-  "buildCommand": "cd artifacts/apex-trader && npx vite build",
-  "outputDirectory": "artifacts/apex-trader/dist",
-  "installCommand": "npm install --prefix artifacts/apex-trader"
+  "installCommand": "npm install",
+  "buildCommand": "npx vite build",
+  "outputDirectory": "dist"
 }
