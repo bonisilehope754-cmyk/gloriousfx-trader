@@ -114,7 +114,6 @@ function SupportTicketsPanel() {
           <div className="space-y-3">
             {tickets.map((t: any) => (
               <div key={t.id} className="border border-border/40 rounded-xl overflow-hidden">
-                {/* Row */}
                 <button
                   className="w-full flex items-center gap-3 p-4 hover:bg-white/3 transition-colors text-left"
                   onClick={() => setExpanded(expanded === t.id ? null : t.id)}
@@ -128,7 +127,6 @@ function SupportTicketsPanel() {
                     {t.status.replace("_", " ")}
                   </span>
                 </button>
-                {/* Expanded */}
                 {expanded === t.id && (
                   <div className="px-4 pb-4 space-y-4 border-t border-border/30 pt-4 bg-background/30">
                     <p className="text-sm text-foreground/90 whitespace-pre-wrap">{t.message}</p>
@@ -272,7 +270,6 @@ export default function AdminPage() {
         <p className="text-muted-foreground">Manage platform, users, payments, and signals.</p>
       </header>
 
-      {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="bg-card/50 border-border/50">
           <CardContent className="p-6">
