@@ -3,7 +3,7 @@ import { Link, useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useLoginUser } from "@workspace/api-client-react";
+import { useLoginUser } from "@/lib/api-client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -22,14 +22,14 @@ export default function LoginPage() {
   const { login } = useAuth();
   const { toast } = useToast();
   
-  const form = useForm<z.infer<typeof loginSchema>>({
+  const form = useForm<<z.infer<<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "" },
   });
 
   const loginMutation = useLoginUser();
 
-  const onSubmit = (values: z.infer<typeof loginSchema>) => {
+  const onSubmit = (values: z.infer<<typeof loginSchema>) => {
     loginMutation.mutate({ data: values }, {
       onSuccess: (data) => {
         login(data.token, { ...data.user, subscriptionTier: data.user.subscriptionTier ?? null, subscriptionExpiry: data.user.subscriptionExpiry ?? null });
