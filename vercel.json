@@ -1,5 +1,8 @@
 {
-  "installCommand": "npm install -g pnpm@9 && pnpm install --no-frozen-lockfile",
+  "installCommand": "npm install -g pnpm@8.15.6 && pnpm install --no-frozen-lockfile",
   "buildCommand": "cd artifacts/apex-trader && pnpm run build",
-  "outputDirectory": "artifacts/apex-trader/dist"
+  "outputDirectory": "artifacts/apex-trader/dist",
+  "engines": {
+    "node": "20.x"
+  }
 }
