@@ -1,111 +1,98 @@
-import { useState } from "react";
-import { Link, useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { useLoginUser } from "@/lib/api-client";
-import { useAuth } from "@/contexts/AuthContext";
-import { useToast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { z } from "zod";
+import { useLoginUser } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const loginSchema = z.object({
-  email: z.string().email({ message: "Invalid email address" }),
-  password: z.string().min(1, { message: "Password is required" }),
+  email: z.string().email("Please enter a valid email"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
-export default function LoginPage() {
-  const [, setLocation] = useLocation();
-  const { login } = useAuth();
-  const { toast } = useToast();
-  
-  const form = useForm<<z.infer<<typeof loginSchema>>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: { email: "", password: "" },
-  });
-
+export default function Login() {
+  const navigate = useNavigate();
   const loginMutation = useLoginUser();
 
-  const onSubmit = (values: z.infer<<typeof loginSchema>) => {
-    loginMutation.mutate({ data: values }, {
-      onSuccess: (data) => {
-        login(data.token, { ...data.user, subscriptionTier: data.user.subscriptionTier ?? null, subscriptionExpiry: data.user.subscriptionExpiry ?? null });
-        setLocation("/dashboard");
-      },
-      onError: (error: any) => {
-        toast({
-          variant: "destructive",
-          title: "Login Failed",
-          description: error.message || "Invalid credentials",
-        });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(loginSchema),
+  });
+
+  const onSubmit = (values: z.infer<typeof loginSchema>) => {
+    loginMutation.mutate(
+      { data: values },
+      {
+        onSuccess: (data) => {
+          localStorage.setItem("token", data.token);
+          navigate("/dashboard");
+        },
+        onError: (error) => {
+          console.error("Login failed:", error);
+        },
       }
-    });
+    );
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
-      <Link href="/" className="mb-8 hover:opacity-80 transition-opacity block">
-        <img src="/logo.png" alt="Glorious Trader" className="h-20 w-auto mx-auto" />
-      </Link>
-      
-      <Card className="w-full max-w-md border-border/50 card-glow bg-card/50 backdrop-blur-sm">
-        <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-2xl font-bold tracking-tight">Access Terminal</CardTitle>
-          <CardDescription>Enter your credentials to access the trading dashboard</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input placeholder="trader@example.com" {...field} className="bg-background/50 focus:border-neon-green/50" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <div className="flex items-center justify-between">
-                      <FormLabel>Password</FormLabel>
-                    </div>
-                    <FormControl>
-                      <Input type="password" {...field} className="bg-background/50 focus:border-neon-green/50" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button 
-                type="submit" 
-                className="w-full bg-neon-green text-black hover:bg-neon-green/90 neon-glow mt-6"
-                disabled={loginMutation.isPending}
-              >
-                {loginMutation.isPending ? "Authenticating..." : "Initialize Session"}
-              </Button>
-            </form>
-          </Form>
-        </CardContent>
-        <CardFooter className="flex flex-col items-center justify-center gap-4 text-sm text-muted-foreground border-t border-border/50 pt-6">
+    <div className="flex min-h-screen items-center justify-center bg-gray-50">
+      <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
+        <h1 className="mb-6 text-center text-2xl font-bold text-gray-900">
+          Sign In
+        </h1>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
-            Don't have an account?{" "}
-            <Link href="/signup" className="text-neon-green hover:underline">
-              Register here
-            </Link>
+            <label className="mb-1 block text-sm font-medium text-gray-700">
+              Email
+            </label>
+            <input
+              type="email"
+              {...register("email")}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              placeholder="you@example.com"
+            />
+            {errors.email && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.email.message}
+              </p>
+            )}
           </div>
-        </CardFooter>
-      </Card>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700">
+              Password
+            </label>
+            <input
+              type="password"
+              {...register("password")}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              placeholder="Enter your password"
+            />
+            {errors.password && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.password.message}
+              </p>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            disabled={loginMutation.isPending}
+            className="w-full rounded-md bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {loginMutation.isPending ? "Signing in..." : "Sign In"}
+          </button>
+        </form>
+
+        {loginMutation.isError && (
+          <p className="mt-4 text-center text-sm text-red-600">
+            {loginMutation.error?.message || "Login failed. Please try again."}
+          </p>
+        )}
+      </div>
     </div>
   );
 }
