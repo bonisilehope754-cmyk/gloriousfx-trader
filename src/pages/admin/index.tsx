@@ -59,7 +59,7 @@ function SupportTicketsPanel() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [expanded, setExpanded] = useState<number | null>(null);
-  const [note, setNote] = useState<<Record<number, string>>({});
+  const [note, setNote] = useState<Record<number, string>>({});
 
   const { data: tickets = [], isLoading } = useQuery({
     queryKey: ["admin-support-tickets"],
@@ -107,7 +107,7 @@ function SupportTicketsPanel() {
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <p className="text-muted-foreground text-sm">Loading tickets…</p>
+          <p className="text-muted-foreground text-sm">Loading tickets...</p>
         ) : tickets.length === 0 ? (
           <p className="text-muted-foreground text-sm">No support tickets yet.</p>
         ) : (
@@ -121,7 +121,7 @@ function SupportTicketsPanel() {
                   {STATUS_ICON[t.status] ?? STATUS_ICON.open}
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-sm truncate">{t.subject}</p>
-                    <p className="text-xs text-muted-foreground">{t.name} · {t.email} · {format(new Date(t.createdAt), "dd MMM yyyy HH:mm")}</p>
+                    <p className="text-xs text-muted-foreground">{t.name} &middot; {t.email} &middot; {format(new Date(t.createdAt), "dd MMM yyyy HH:mm")}</p>
                   </div>
                   <span className="text-xs capitalize font-medium px-2 py-1 rounded-full bg-white/5 border border-border/40 shrink-0">
                     {t.status.replace("_", " ")}
@@ -138,7 +138,7 @@ function SupportTicketsPanel() {
                     <div className="flex flex-wrap gap-2 items-end">
                       <div className="flex-1 min-w-[180px]">
                         <Input
-                          placeholder="Add internal note…"
+                          placeholder="Add internal note..."
                           className="bg-background/50 text-sm"
                           value={note[t.id] ?? ""}
                           onChange={(e) => setNote(n => ({ ...n, [t.id]: e.target.value }))}
@@ -195,12 +195,12 @@ export default function AdminPage() {
   const updateBankMut = useUpdateBankDetails();
   const updatePricingMut = useUpdatePricingPlan();
 
-  const signalForm = useForm<<z.infer<<typeof signalSchema>>({
+  const signalForm = useForm<z.infer<typeof signalSchema>>({
     resolver: zodResolver(signalSchema),
     defaultValues: { pair: "XAUUSD", direction: "BUY", entry: 0, tp1: 0, tp2: 0, sl: 0 },
   });
 
-  const bankForm = useForm<<z.infer<<typeof bankSchema>>({
+  const bankForm = useForm<z.infer<typeof bankSchema>>({
     resolver: zodResolver(bankSchema),
     values: bankDetails ? {
       bankName: bankDetails.bankName,
@@ -232,7 +232,7 @@ export default function AdminPage() {
     });
   };
 
-  const onSignalSubmit = (values: z.infer<<typeof signalSchema>) => {
+  const onSignalSubmit = (values: z.infer<typeof signalSchema>) => {
     createSignalMut.mutate({ data: values }, {
       onSuccess: () => {
         toast({ title: "Signal published successfully" });
@@ -242,7 +242,7 @@ export default function AdminPage() {
     });
   };
 
-  const onBankSubmit = (values: z.infer<<typeof bankSchema>) => {
+  const onBankSubmit = (values: z.infer<typeof bankSchema>) => {
     updateBankMut.mutate({ data: values }, {
       onSuccess: () => {
         toast({ title: "Bank details updated" });
